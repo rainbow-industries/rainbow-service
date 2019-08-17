@@ -1,0 +1,15 @@
+name: rainbow-service
+organization: rainbow-industries
+version: 1.0.0
+elevator-pitch: Service basics for all of the rainbow software
+engine:
+    node: 12.0.0+
+commands:
+    test: node --no-warnings --experimental-modules ./es-modules/distributed-systems/section-tests/x/bin/run.js ./test/*.js
+npm-convert:
+dev-link:
+    - ../distributed-systems/section-tests
+    - ../distributed-systems/http2-client
+    - ../distributed-systems/http2-server
+    - rainbow-config
+    - rainbow-authorization-middleware
