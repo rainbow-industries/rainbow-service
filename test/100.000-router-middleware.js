@@ -9,7 +9,10 @@ section('RouterMiddleware', (section) => {
     section.test('analyze valid route', async () => {
         let controller, action;
 
-        const middleware = new RouterMiddleware();
+        const middleware = new RouterMiddleware({
+            serviceName: 'test-service',
+            serviceVersion: '1.0',
+        });
 
         const server = new HTTP2Server({ secure: false });
         await server.load();
@@ -23,17 +26,24 @@ section('RouterMiddleware', (section) => {
 
         const client = new HTTP2Client();
 
-        await client.get('http://l.dns.porn:7896/test').expect(404).send();
+        await client.get('http://l.dns.porn:7896/test-service/1.0/test').expect(404).send();
+        await client.end();
         await server.close();
 
         assert.equal(controller, 'test');
         assert.equal(action, 'list');
     });
 
+
+
+
     section.test('analyze valid route [listOne]', async () => {
         let controller, action;
 
-        const middleware = new RouterMiddleware();
+        const middleware = new RouterMiddleware({
+            serviceName: 'test-service',
+            serviceVersion: '1.0',
+        });
 
         const server = new HTTP2Server({ secure: false });
         await server.load();
@@ -47,17 +57,24 @@ section('RouterMiddleware', (section) => {
 
         const client = new HTTP2Client();
 
-        await client.get('http://l.dns.porn:7896/test/abc').expect(404).send();
+        await client.get('http://l.dns.porn:7896/test-service/1.0/test/abc').expect(404).send();
+        await client.end();
         await server.close();
 
         assert.equal(controller, 'test');
         assert.equal(action, 'listOne');
     });
 
+
+
+
     section.test('analyze invalid route', async () => {
         let controller, action;
 
-        const middleware = new RouterMiddleware();
+        const middleware = new RouterMiddleware({
+            serviceName: 'test-service',
+            serviceVersion: '1.0',
+        });
 
         const server = new HTTP2Server({ secure: false });
         await server.load();
@@ -71,17 +88,24 @@ section('RouterMiddleware', (section) => {
 
         const client = new HTTP2Client();
 
-        await client.get('http://l.dns.porn:7896/test/abc/789').expect(404).send();
+        await client.get('http://l.dns.porn:7896/test-service/1.0/test/abc/789').expect(404).send();
+        await client.end();
         await server.close();
 
         assert.equal(controller, null);
         assert.equal(action, null);
     });
 
+
+    
+
     section.test('analyze invalid route 2', async () => {
         let controller, action;
 
-        const middleware = new RouterMiddleware();
+        const middleware = new RouterMiddleware({
+            serviceName: 'test-service',
+            serviceVersion: '1.0',
+        });
 
         const server = new HTTP2Server({ secure: false });
         await server.load();
@@ -95,7 +119,8 @@ section('RouterMiddleware', (section) => {
 
         const client = new HTTP2Client();
 
-        await client.get('http://l.dns.porn:7896/-test/abc/789').expect(404).send();
+        await client.get('http://l.dns.porn:7896/test-service/1.0/-test/abc/789').expect(404).send();
+        await client.end();
         await server.close();
 
         assert.equal(controller, null);

@@ -1,0 +1,5 @@
+server:
+    port: 4891
+services:
+    authorization:
+        host: l.dns.porn:1755

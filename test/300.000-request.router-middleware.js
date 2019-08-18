@@ -11,7 +11,10 @@ section('RequestRouterMiddleware', (section) => {
     section.test('analyze valid route', async () => {
         const controllers = new Map();
         const controller = new Controller({ name: 'test' });
-        const routerMiddleware = new RouterMiddleware();
+        const routerMiddleware = new RouterMiddleware({
+            serviceName: 'test-service',
+            serviceVersion: '1.0',
+        });
 
         controller.enableAction('list');
         controller.list = async(request) => {
@@ -37,7 +40,7 @@ section('RequestRouterMiddleware', (section) => {
 
         const client = new HTTP2Client();
 
-        await client.get('http://l.dns.porn:7896/test').expect(201).send();
+        await client.get('http://l.dns.porn:7896/test-service/1.0/test').expect(201).send();
         await server.close();
     });
 
@@ -45,7 +48,10 @@ section('RequestRouterMiddleware', (section) => {
     section.test('analyze invalid route', async () => {
         const controllers = new Map();
         const controller = new Controller({ name: 'test' });
-        const routerMiddleware = new RouterMiddleware();
+        const routerMiddleware = new RouterMiddleware({
+            serviceName: 'test-service',
+            serviceVersion: '1.0',
+        });
 
         controller.enableAction('list');
         controller.list = async(request) => {
@@ -71,7 +77,8 @@ section('RequestRouterMiddleware', (section) => {
 
         const client = new HTTP2Client();
 
-        await client.get('http://l.dns.porn:7896/').expect(500).send();
+        await client.get('http://l.dns.porn:7896/test-service/1.0/').expect(500).send();
+        await client.end();
         await server.close();
     });
 
@@ -79,7 +86,10 @@ section('RequestRouterMiddleware', (section) => {
     section.test('analyze invalid route [2]', async () => {
         const controllers = new Map();
         const controller = new Controller({ name: 'test' });
-        const routerMiddleware = new RouterMiddleware();
+        const routerMiddleware = new RouterMiddleware({
+            serviceName: 'test-service',
+            serviceVersion: '1.0',
+        });
 
         controller.enableAction('list');
         controller.list = async(request) => {
@@ -105,7 +115,8 @@ section('RequestRouterMiddleware', (section) => {
 
         const client = new HTTP2Client();
 
-        await client.get('http://l.dns.porn:7896/nope').expect(404).send();
+        await client.get('http://l.dns.porn:7896/test-service/1.0/nope').expect(404).send();
+        await client.end();
         await server.close();
     });
 
@@ -113,7 +124,10 @@ section('RequestRouterMiddleware', (section) => {
     section.test('analyze invalid route [3]', async () => {
         const controllers = new Map();
         const controller = new Controller({ name: 'test' });
-        const routerMiddleware = new RouterMiddleware();
+        const routerMiddleware = new RouterMiddleware({
+            serviceName: 'test-service',
+            serviceVersion: '1.0',
+        });
 
         controllers.set(controller.getName(), controller);
 
@@ -132,7 +146,8 @@ section('RequestRouterMiddleware', (section) => {
 
         const client = new HTTP2Client();
 
-        await client.get('http://l.dns.porn:7896/test').expect(405).send();
+        await client.get('http://l.dns.porn:7896/test-service/1.0/test').expect(405).send();
+        await client.end();
         await server.close();
     });
 });

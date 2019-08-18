@@ -1,3 +1,4 @@
+import RainbowConfig from '../es-modules/rainbow-industries/rainbow-config/1.x/RainbowConfig.js';
 import Server from './Server.js';
 import path from 'path';
 
@@ -8,7 +9,13 @@ export default class Service {
     constructor({
         serviceDir,
         name,
+        version,
     }) {
+        if (!serviceDir) throw new Error(`Missing the serviceDir option!`);
+        if (!name) throw new Error(`Missing the name option!`);
+        if (!version) throw new Error(`Missing the version option!`);
+
+        this.version = version;
         this.name = name;
         this.serviceDir = serviceDir;
         this.controllers = new Map();
@@ -46,11 +53,17 @@ export default class Service {
      */
     async load() {
         await this.setupConfig();
-        await this.setupAuthorizatiom();
         await this.setupServer();
     }
 
 
+
+    /**
+     * shut down the service
+     */
+    async end() {
+        await this.server.close();
+    }
 
 
     /**
@@ -61,6 +74,7 @@ export default class Service {
             serviceName: this.getName(),
             controllers: this.controllers,
             config: this.config,
+            serviceVersion: this.version,
         });
 
         await this.server.load();
@@ -73,7 +87,7 @@ export default class Service {
      * load the config file
      */
     async setupConfig() {
-        this.config = new RainbowConfig(path.join(serviceDir, 'config'), this.secretsDir);
+        this.config = new RainbowConfig(path.join(this.serviceDir, 'config'), this.serviceDir);
         await this.config.load();
     }
 }

@@ -55,7 +55,27 @@ export default class RequestRoutingMiddleware {
                 });
         }
 
+        let data;
 
-        return await controller.executeAction(action, request); 
+        try {
+            data = await controller.executeAction(action, request);
+        } catch (err) {
+            if (!request.response().isSent()) {
+                return request.response()
+                    .status(500)
+                    .send({
+                        status: 500,
+                        message: `The server encountered an error: ${err.message}`,
+                    });
+            }
+        }
+
+        
+        if (data && !request.response().isSent()) {
+            return request.response()
+                .status(200)
+                .setHeader('content-type', 'application/json')
+                .send(JSON.stringify(data));
+        }
     }
 }

@@ -1,5 +1,5 @@
-import HTTP2Server from '../es-modules/distributed-systems/http2-server/1.x/HTTP2Server.js';
-import AuthorizationMiddleware from '../es-modules/rainbow-industries/rainbow-authorization-middleware/AuthorizationMiddleware.js';
+import HTTP2Server from '../es-modules/distributed-systems/http2-server/2.x/HTTP2Server.js';
+import AuthorizationMiddleware from '../es-modules/rainbow-industries/rainbow-authorization-middleware/1.x/AuthorizationMiddleware.js';
 import RouterMiddleware from './RouterMiddleware.js';
 import RequestRouterMiddleware from './RequestRouterMiddleware.js';
 
@@ -7,14 +7,16 @@ import RequestRouterMiddleware from './RequestRouterMiddleware.js';
 export default class Server {
 
 
-    construtor({
+    constructor({
         config,
         controllers,
         serviceName,
+        serviceVersion,
     }) {
         this.config = config;
         this.controllers = controllers;
         this.serviceName = serviceName;
+        this.serviceVersion = serviceVersion;
     }
 
 
@@ -23,17 +25,24 @@ export default class Server {
      * load all module, start listening for requests
      */
     async load() {
-        this.server = new HTTP2Server();
+        this.server = new HTTP2Server({ secure: false });
 
         // manage authorization and routing
         await this.loadRouterMiddleware();
         await this.loadAuthorizationMiddleware();
         await this.loadRequestRouterMiddleware();
 
-
-        await this.server.listen(thios.config.get('server.port'));
+        await this.server.listen(this.config.get('server.port'));
     }
 
+
+
+    /**
+     * close the server
+     */
+    async close() {
+        await this.server.close();
+    }
 
 
 
@@ -45,7 +54,7 @@ export default class Server {
      */
     async loadRequestRouterMiddleware(request) {
         this.requestRouterMiddleware = new RequestRouterMiddleware({
-            controller: this.controllers,
+            controllers: this.controllers,
             serviceName: this.serviceName,
         });
 
@@ -59,7 +68,11 @@ export default class Server {
      * Loads a router middleware.
      */
     async loadRouterMiddleware() {
-        this.routerMiddleware = enw RouterMiddleware();
+        this.routerMiddleware = new RouterMiddleware({
+            serviceVersion: this.serviceVersion,
+            serviceName: this.serviceName,
+        });
+        
         this.server.registerMiddleware(this.routerMiddleware);
     }
 
@@ -74,6 +87,6 @@ export default class Server {
             serviceName: this.serviceName,
         });
 
-        this.services.registerMiddleware(this.authorizationMiddleware);
+        this.server.registerMiddleware(this.authorizationMiddleware);
     }
 }
