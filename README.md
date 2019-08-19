@@ -94,7 +94,7 @@ Actions are represented by HTTP verbs. They are also different depending on if t
 - describe: `OPTIONS //serviceName/versioncontrollerName`
 
 
-The first part of the URL represents always the controllers name. No other URLs are supported.
+The first part of the URL represents is the service name, the second the service version, the third the controller name and the fourth the optional id.
 
 
 ## Running your Service
@@ -118,7 +118,7 @@ You have to implement the RainbowService class and he Controller class for each 
 
 You have to implement this class.
 
-The constructor of the RainbowService class must call super with the follwoing options:
+The constructor of the RainbowService class must call super with the following options:
 
 - serviceDir: this is the path to the directory the service is implemented in, it's used to load the config file from the config dir. You may use the following code to determine the current directory `path.dirname(new URL(import.meta.url).pathname);`
 - name: the name of the service, this is used to load the permissions and for building the URLs
@@ -201,7 +201,7 @@ export default class SomeController {
 
 Actions are implemented as async methods on the controller. If they throw errors, they will be returned as a server error. If they return data, the data will be returned as JSON object to the client.
 
-The `request``object isa an instance of the request object of the [HTTP2-Server](https://github.com/distributed-systems/http2-server) 
+The `request` object is an instance of the request object of the [HTTP2-Server](https://github.com/distributed-systems/http2-server) 
 
 **Return JSON**
 
@@ -213,7 +213,7 @@ export default class SomeController {
     async list(request) {
         return [{
             id: 1,
-        }]
+        }];
     }
 }
 ```
